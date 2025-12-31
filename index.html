@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>eFootball Group Standings</title>
+
+<style>
+body {
+  background: #0b0f1a;
+  color: #fff;
+  font-family: Poppins, Arial, sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: #12192f;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 18px rgba(0,0,0,.35);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 6px 8px;
+  text-align: center;
+}
+
+th {
+  background: #1d2744;
+}
+
+tr:nth-child(even) {
+  background: rgba(255,255,255,.04);
+}
+
+tr:nth-child(1) td,
+tr:nth-child(2) td {
+  color: #4ade80;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Perceptron — eFootball Group Standings</h1>
+
+<div id="groups" class="grid"></div>
+
+<script>
+const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
+
+const SHEET_NAMES = [
+  "Group 1","Group 2","Group 3","Group 4",
+  "Group 5","Group 6","Group 7","Group 8"
+];
+
+// pulls only T2:AB range
+async function loadGroup(name) {
+
+  const query = encodeURIComponent("select *");
+  const range = "T2:AB50";
+
+  const url =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(name)}&range=${range}&tq=${query}`;
+
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47, text.length - 2));
+
+  const rows = json.table.rows
+    .map(r => r.c.map(c => c?.v ?? ""))
+    .filter(r => r[0] !== "");   // ignore blank lines
+
+  return { name, rows };
+}
+
+async function render() {
+  const container = document.getElementById("groups");
+  container.innerHTML = "";
+
+  for (const name of SHEET_NAMES) {
+    const data = await loadGroup(name);
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    let html = `
+      <h2>${name}</h2>
+      <table>
+        <tr>
+          <th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th>
+          <th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>`;
+
+    data.rows.forEach(r => {
+      html += `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`;
+    });
+
+    html += `</table>`;
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+}
+
+render();
+setInterval(render, 25000);
+</script>
+
+
+</body>
+</html>
