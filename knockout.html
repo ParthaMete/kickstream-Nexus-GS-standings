@@ -7,14 +7,11 @@
 <style>
 :root{
   --bg:#020617;
-  --panel:#0b1224;
-  --card:#111827;
+  --card:#0f172a;
   --line:#38bdf8;
   --win:#4ade80;
   --text:#e5e7eb;
 }
-
-*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -30,51 +27,37 @@ body{
       rgba(255,255,255,.03) 1px,
       transparent 1px,
       transparent 8px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(255,255,255,.04),
-      transparent 30%,
-      rgba(0,0,0,.8)
     );
 }
 
-/* Stadium light beams */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(120deg,transparent,rgba(56,189,248,.08),transparent),
-    linear-gradient(-120deg,transparent,rgba(56,189,248,.06),transparent);
-  animation:lights 8s infinite alternate;
-  pointer-events:none;
-}
-
-@keyframes lights{
-  from{opacity:.3}
-  to{opacity:.7}
-}
-
+/* HEADER */
 h1{
   text-align:center;
   font-size:52px;
-  margin-bottom:8px;
+  margin-bottom:10px;
   background:linear-gradient(90deg,#38bdf8,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
 .sub{
   text-align:center;
-  opacity:.7;
   margin-bottom:40px;
+  opacity:.7;
 }
 
-a{color:#7dd3fc;text-decoration:none}
+/* BRACKET WRAPPER */
+.bracket-wrapper{
+  position:relative;
+}
 
-/* ================= BRACKET ================= */
+/* SVG CONNECTOR LINES */
+svg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
 
+/* GRID */
 .bracket{
   position:relative;
   display:grid;
@@ -83,106 +66,52 @@ a{color:#7dd3fc;text-decoration:none}
   align-items:center;
 }
 
-/* ================= COLUMNS ================= */
-
+/* COLUMNS */
 .column{
   display:flex;
   flex-direction:column;
   gap:26px;
-  position:relative;
 }
 
 .column h2{
   text-align:center;
   color:#7dd3fc;
-  letter-spacing:1px;
 }
 
-.center{
-  align-items:center;
-}
-
-/* ================= MATCH CARD ================= */
-
+/* MATCH CARD */
 .match{
   background:linear-gradient(180deg,#111827,#0b1224);
   border-radius:18px;
   padding:16px;
   text-align:center;
-  box-shadow:0 20px 45px rgba(0,0,0,.55);
-  transition:.35s ease;
+  box-shadow:0 20px 45px rgba(0,0,0,.6);
 }
 
-.match:hover{
-  transform:translateY(-6px) scale(1.05);
+.player{padding:6px 0}
+.score{font-size:22px;font-weight:800}
+.win{color:var(--win)}
+
+/* CENTER */
+.center{
+  align-items:center;
 }
-
-.match.locked{
-  opacity:.35;
-  filter:grayscale(1);
+.trophy{
+  font-size:110px;
+  margin:20px 0;
+  filter:drop-shadow(0 0 30px rgba(56,189,248,.9));
 }
-
-.player{
-  font-size:15px;
-  padding:6px 0;
-}
-
-.score{
-  font-size:22px;
-  font-weight:800;
-  margin:6px 0;
-}
-
-.win{
-  color:var(--win);
-  text-shadow:0 0 18px rgba(74,222,128,.9);
-}
-
-/* ================= CONNECTOR LINES ================= */
-
-.line-h{
-  position:absolute;
-  height:3px;
-  background:linear-gradient(to right,transparent,var(--line),transparent);
-  opacity:.7;
-}
-
-.line-v{
-  position:absolute;
-  width:3px;
-  background:linear-gradient(to bottom,transparent,var(--line),transparent);
-  opacity:.7;
-}
-
-/* ================= FINAL ================= */
-
 .champion{
   background:linear-gradient(90deg,#38bdf8,#60a5fa);
   color:#020617;
   padding:14px 36px;
   border-radius:999px;
   font-weight:800;
-  margin-bottom:18px;
-  animation:champ 2.5s infinite;
+  margin-bottom:20px;
 }
 
-@keyframes champ{
-  0%{box-shadow:0 0 15px rgba(56,189,248,.4)}
-  50%{box-shadow:0 0 45px rgba(56,189,248,1)}
-  100%{box-shadow:0 0 15px rgba(56,189,248,.4)}
-}
-
-.trophy{
-  font-size:120px;
-  margin:20px 0;
-  filter:drop-shadow(0 0 35px rgba(56,189,248,.9));
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (min-width:1600px){
-  body{padding:70px}
-  h1{font-size:64px}
+/* THIRD PLACE */
+.third{
+  margin-top:30px;
 }
 </style>
 </head>
@@ -190,9 +119,35 @@ a{color:#7dd3fc;text-decoration:none}
 <body>
 
 <h1>Perceptron 2026 — eFootball Knockouts</h1>
-<div class="sub"><a href="index.html">← Back to Group Stage</a></div>
+<div class="sub">🏆 Road to Glory</div>
 
-<div id="bracket" class="bracket"></div>
+<div class="bracket-wrapper">
+
+<!-- CONNECTING LINES -->
+<svg viewBox="0 0 1400 800" preserveAspectRatio="none">
+  <!-- LEFT SIDE -->
+  <path d="M250 140 H380 V260 H500" stroke="#38bdf8" stroke-width="3" fill="none"/>
+  <path d="M250 360 H380 V260" stroke="#38bdf8" stroke-width="3" fill="none"/>
+
+  <path d="M250 520 H380 V640 H500" stroke="#38bdf8" stroke-width="3" fill="none"/>
+  <path d="M250 740 H380 V640" stroke="#38bdf8" stroke-width="3" fill="none"/>
+
+  <!-- RIGHT SIDE -->
+  <path d="M1150 140 H1020 V260 H900" stroke="#38bdf8" stroke-width="3" fill="none"/>
+  <path d="M1150 360 H1020 V260" stroke="#38bdf8" stroke-width="3" fill="none"/>
+
+  <path d="M1150 520 H1020 V640 H900" stroke="#38bdf8" stroke-width="3" fill="none"/>
+  <path d="M1150 740 H1020 V640" stroke="#38bdf8" stroke-width="3" fill="none"/>
+
+  <!-- SEMI TO FINAL -->
+  <path d="M500 260 H700" stroke="#38bdf8" stroke-width="3"/>
+  <path d="M900 260 H700" stroke="#38bdf8" stroke-width="3"/>
+</svg>
+
+<!-- BRACKET CONTENT -->
+<div class="bracket" id="bracket"></div>
+
+</div>
 
 <script>
 const SHEET_ID="1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
@@ -206,24 +161,22 @@ async function fetchSheet(name){
 }
 
 function card([,a,b,sa,sb]){
-  let aw="",bw="",lock="locked";
+  let aw="",bw="";
   if(sa!==""&&sb!==""){
-    lock="";
     if(sa>sb) aw="win";
     if(sb>sa) bw="win";
   }
   return `
-    <div class="match ${lock}">
-      <div class="player ${aw}">${a}</div>
-      <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
-      <div class="player ${bw}">${b}</div>
-    </div>`;
+  <div class="match">
+    <div class="player ${aw}">${a}</div>
+    <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
+    <div class="player ${bw}">${b}</div>
+  </div>`;
 }
 
 async function render(){
   const r16=await fetchSheet("Knockout");
   const qf =await fetchSheet("Quarterfinals");
-  const sf =await fetchSheet("Semifinals");
   const fin=await fetchSheet("Final");
   const third=await fetchSheet("ThirdPlace");
 
@@ -245,7 +198,8 @@ async function render(){
     center.innerHTML=`<div class="champion">🏆 Champion: ${w}</div>`+center.innerHTML;
   }
 
-  center.innerHTML+=`<div class="trophy">🏆</div><h2>3rd Place Match</h2>`;
+  center.innerHTML+=`<div class="trophy">🏆</div>
+    <div class="third"><h2>3rd Place</h2></div>`;
   third.forEach(r=>center.innerHTML+=card(r));
 
   const root=document.getElementById("bracket");
