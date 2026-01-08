@@ -7,45 +7,58 @@
 <style>
 :root{
   --bg:#020617;
-  --card:#0b1226;
-  --line:#38bdf8;
+  --panel:#0b1226;
+  --divider:#38bdf8;
+  --accent:#7dd3fc;
   --win:#4ade80;
   --text:#e5e7eb;
 }
 
 body{
   margin:0;
-  padding:60px;
+  padding:70px;
   font-family:Poppins,system-ui,Arial;
   color:var(--text);
 
   background:
-    radial-gradient(circle at center, rgba(56,189,248,.18), transparent 55%),
-    radial-gradient(circle at bottom, rgba(0,0,0,.9), transparent 60%),
+    radial-gradient(circle at center, rgba(56,189,248,.25), transparent 55%),
+    radial-gradient(circle at bottom, rgba(0,0,0,.95), transparent 60%),
     linear-gradient(#020617,#020617);
 }
 
 /* TITLE */
 h1{
   text-align:center;
-  font-size:52px;
-  margin-bottom:10px;
+  font-size:56px;
+  margin-bottom:8px;
   background:linear-gradient(90deg,#38bdf8,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 .sub{
   text-align:center;
-  opacity:.7;
-  margin-bottom:50px;
+  opacity:.75;
+  margin-bottom:70px;
 }
 
-/* BRACKET GRID */
+/* MAIN GRID */
 .bracket{
   display:grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr 1.4fr;
-  gap:70px;
+  grid-template-columns: 1.4fr .08fr 1fr .08fr 1fr .08fr 1fr .08fr 1.4fr;
   align-items:center;
+}
+
+/* VERTICAL DIVIDER */
+.divider{
+  height:100%;
+  background:linear-gradient(
+    to bottom,
+    transparent,
+    rgba(56,189,248,.5),
+    transparent
+  );
+  border-radius:10px;
+  box-shadow:0 0 25px rgba(56,189,248,.6);
 }
 
 /* COLUMN */
@@ -57,55 +70,49 @@ h1{
 
 .column h2{
   text-align:center;
-  color:#7dd3fc;
+  color:var(--accent);
+  margin-bottom:10px;
 }
 
 /* MATCH CARD */
 .match{
-  position:relative;
   background:linear-gradient(180deg,#0f172a,#020617);
-  border-radius:18px;
-  padding:18px;
+  border-radius:22px;
+  padding:20px;
   text-align:center;
-  box-shadow:0 20px 50px rgba(0,0,0,.8);
+  box-shadow:
+    0 25px 60px rgba(0,0,0,.9),
+    inset 0 0 0 1px rgba(255,255,255,.04);
 }
 
-/* CONNECTOR LINE */
-.match::after{
-  content:"";
-  position:absolute;
-  right:-35px;
-  top:50%;
-  width:35px;
-  height:2px;
-  background:var(--line);
-}
-.right .match::after{
-  left:-35px;
-  right:auto;
-}
-
-/* TEXT */
 .player{padding:6px 0}
-.score{font-size:22px;font-weight:800}
+.score{
+  font-size:24px;
+  font-weight:900;
+  margin:6px 0;
+}
 .win{color:var(--win)}
 
-/* CENTER */
+/* CENTER COLUMN */
 .center{
   align-items:center;
 }
+
 .trophy{
-  font-size:120px;
-  margin:25px 0;
-  filter:drop-shadow(0 0 40px rgba(56,189,248,.9));
+  font-size:140px;
+  margin:30px 0;
+  filter:drop-shadow(0 0 50px rgba(56,189,248,1));
 }
+
 .champion{
   background:linear-gradient(90deg,#38bdf8,#60a5fa);
   color:#020617;
-  padding:14px 36px;
+  padding:16px 44px;
   border-radius:999px;
-  font-weight:800;
-  margin-bottom:20px;
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:22px;
+  box-shadow:0 0 35px rgba(56,189,248,.9);
 }
 </style>
 </head>
@@ -135,11 +142,11 @@ function card([,a,b,sa,sb]){
     if(sb>sa) bw="win";
   }
   return `
-  <div class="match">
-    <div class="player ${aw}">${a}</div>
-    <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
-    <div class="player ${bw}">${b}</div>
-  </div>`;
+    <div class="match">
+      <div class="player ${aw}">${a}</div>
+      <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
+      <div class="player ${bw}">${b}</div>
+    </div>`;
 }
 
 async function render(){
@@ -148,9 +155,9 @@ async function render(){
   const fin=await fetchSheet("Final");
   const third=await fetchSheet("ThirdPlace");
 
-  const col=(title,rows,cls="")=>{
+  const col=(title,rows)=>{
     const d=document.createElement("div");
-    d.className=`column ${cls}`;
+    d.className="column";
     d.innerHTML=`<h2>${title}</h2>`;
     rows.forEach(r=>d.innerHTML+=card(r));
     return d;
@@ -174,11 +181,17 @@ async function render(){
   root.innerHTML="";
   root.append(
     col("Round of 16",r16.slice(0,4)),
+    document.createElement("div"),
     col("Quarterfinals",qf.slice(0,2)),
+    document.createElement("div"),
     center,
-    col("Quarterfinals",qf.slice(2),"right"),
-    col("Round of 16",r16.slice(4),"right")
+    document.createElement("div"),
+    col("Quarterfinals",qf.slice(2)),
+    document.createElement("div"),
+    col("Round of 16",r16.slice(4))
   );
+
+  root.querySelectorAll("div:nth-child(2n)").forEach(d=>d.className="divider");
 }
 
 render();
