@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Perceptron 2026 — eFootball Knockouts</title>
 
 <style>
 :root{
-  --bg:#020617;
-  --panel:#0b1226;
-  --divider:#38bdf8;
+  --bg:#060913;
+  --card:#0f172a;
+  --divider:#1e3a8a;
   --accent:#7dd3fc;
   --win:#4ade80;
   --text:#e5e7eb;
@@ -16,103 +16,105 @@
 
 body{
   margin:0;
-  padding:70px;
+  padding:50px;
   font-family:Poppins,system-ui,Arial;
   color:var(--text);
-
   background:
-    radial-gradient(circle at center, rgba(56,189,248,.25), transparent 55%),
-    radial-gradient(circle at bottom, rgba(0,0,0,.95), transparent 60%),
-    linear-gradient(#020617,#020617);
+    radial-gradient(circle at center, rgba(30,58,138,.25), transparent 55%),
+    linear-gradient(#060913,#020617);
 }
 
-/* TITLE */
 h1{
   text-align:center;
-  font-size:56px;
-  margin-bottom:8px;
-  background:linear-gradient(90deg,#38bdf8,#60a5fa);
+  font-size:42px;
+  margin-bottom:12px;
+  background:linear-gradient(90deg,#7dd3fc,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
+
 .sub{
   text-align:center;
-  opacity:.75;
-  margin-bottom:70px;
+  opacity:.7;
+  margin-bottom:50px;
 }
 
 /* MAIN GRID */
 .bracket{
   display:grid;
-  grid-template-columns: 1.4fr .08fr 1fr .08fr 1fr .08fr 1fr .08fr 1.4fr;
-  align-items:center;
+  grid-template-columns:
+    1.4fr  /* R16 left */
+    40px
+    1fr    /* QF left */
+    40px
+    1fr    /* FINAL */
+    40px
+    1fr    /* QF right */
+    40px
+    1.4fr; /* R16 right */
+  align-items:start;
 }
 
-/* VERTICAL DIVIDER */
+/* SIMPLE DIVIDER */
 .divider{
+  width:6px;
   height:100%;
   background:linear-gradient(
     to bottom,
     transparent,
-    rgba(56,189,248,.5),
+    var(--divider),
     transparent
   );
   border-radius:10px;
-  box-shadow:0 0 25px rgba(56,189,248,.6);
 }
 
 /* COLUMN */
 .column{
   display:flex;
   flex-direction:column;
-  gap:28px;
+  gap:26px;
 }
 
 .column h2{
   text-align:center;
   color:var(--accent);
-  margin-bottom:10px;
+  margin-bottom:6px;
 }
 
 /* MATCH CARD */
 .match{
   background:linear-gradient(180deg,#0f172a,#020617);
-  border-radius:22px;
-  padding:20px;
+  border-radius:18px;
+  padding:18px;
   text-align:center;
   box-shadow:
-    0 25px 60px rgba(0,0,0,.9),
+    0 20px 45px rgba(0,0,0,.6),
     inset 0 0 0 1px rgba(255,255,255,.04);
 }
 
 .player{padding:6px 0}
 .score{
-  font-size:24px;
-  font-weight:900;
+  font-size:22px;
+  font-weight:800;
   margin:6px 0;
 }
 .win{color:var(--win)}
 
-/* CENTER COLUMN */
+/* CENTER */
 .center{
   align-items:center;
 }
 
 .trophy{
-  font-size:140px;
-  margin:30px 0;
-  filter:drop-shadow(0 0 50px rgba(56,189,248,1));
+  font-size:110px;
+  margin:20px 0;
 }
-
 .champion{
-  background:linear-gradient(90deg,#38bdf8,#60a5fa);
-  color:#020617;
-  padding:16px 44px;
+  background:#1e40af;
+  padding:12px 36px;
   border-radius:999px;
-  font-size:22px;
-  font-weight:900;
-  margin-bottom:22px;
-  box-shadow:0 0 35px rgba(56,189,248,.9);
+  font-weight:800;
+  margin-bottom:20px;
 }
 </style>
 </head>
@@ -120,7 +122,7 @@ h1{
 <body>
 
 <h1>Perceptron 2026 — eFootball Knockouts</h1>
-<div class="sub">🏆 Road to Glory</div>
+<div class="sub">Official Knockout Stage</div>
 
 <div class="bracket" id="bracket"></div>
 
@@ -167,31 +169,22 @@ async function render(){
   center.className="column center";
   center.innerHTML="<h2>Final</h2>";
   fin.forEach(r=>center.innerHTML+=card(r));
-
-  if(fin[0]&&fin[0][3]!==""&&fin[0][4]!==""){
-    const w=fin[0][3]>fin[0][4]?fin[0][1]:fin[0][2];
-    center.innerHTML=`<div class="champion">🏆 Champion: ${w}</div>`+center.innerHTML;
-  }
-
-  center.innerHTML+=`<div class="trophy">🏆</div>
-    <h2>3rd Place</h2>`;
+  center.innerHTML+=`<div class="trophy">🏆</div><h2>3rd Place</h2>`;
   third.forEach(r=>center.innerHTML+=card(r));
 
   const root=document.getElementById("bracket");
   root.innerHTML="";
   root.append(
     col("Round of 16",r16.slice(0,4)),
-    document.createElement("div"),
+    Object.assign(document.createElement("div"),{className:"divider"}),
     col("Quarterfinals",qf.slice(0,2)),
-    document.createElement("div"),
+    Object.assign(document.createElement("div"),{className:"divider"}),
     center,
-    document.createElement("div"),
+    Object.assign(document.createElement("div"),{className:"divider"}),
     col("Quarterfinals",qf.slice(2)),
-    document.createElement("div"),
+    Object.assign(document.createElement("div"),{className:"divider"}),
     col("Round of 16",r16.slice(4))
   );
-
-  root.querySelectorAll("div:nth-child(2n)").forEach(d=>d.className="divider");
 }
 
 render();
