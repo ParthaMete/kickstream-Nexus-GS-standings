@@ -5,66 +5,171 @@
 <title>eFootball Knockout Stage</title>
 
 <style>
+:root{
+  --bg:#060913;
+  --card:#0f172a;
+  --accent:#22d3ee;
+  --win:#4ade80;
+  --text:#e5e7eb;
+}
+
 body{
-  background:#0b0f1a;
-  color:#ffffff;
-  font-family:Poppins, Arial, sans-serif;
-  padding:20px;
+  background:
+    radial-gradient(circle at top,#0b1226,#060913 60%);
+  color:var(--text);
+  font-family:Poppins,system-ui,Arial;
+  padding:24px;
 }
 
 h1{
   text-align:center;
-  margin-bottom:25px;
-  letter-spacing:1px;
+  font-size:32px;
+  margin-bottom:30px;
+  letter-spacing:1.5px;
+  background:linear-gradient(90deg,#22d3ee,#60a5fa,#22d3ee);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
 .stage{
-  background:#12192f;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:18px;
-  box-shadow:0 10px 20px rgba(0,0,0,.35);
+  position:relative;
+  background:rgba(15,23,42,.85);
+  backdrop-filter: blur(12px);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:26px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 25px 60px rgba(0,0,0,.6);
+  overflow:hidden;
+}
+
+.stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(34,211,238,.12),transparent);
+  pointer-events:none;
 }
 
 .stage h2{
-  margin:0 0 10px 0;
-  font-size:18px;
-  border-bottom:1px solid rgba(255,255,255,.15);
-  padding-bottom:6px;
+  margin:0 0 14px;
+  font-size:20px;
+  letter-spacing:1px;
+  color:#e0f2fe;
 }
 
 table{
   width:100%;
-  border-collapse:collapse;
-  font-size:15px;
-}
-
-th,td{
-  padding:8px;
-  text-align:center;
+  border-collapse:separate;
+  border-spacing:0 6px;
+  font-size:16px;
 }
 
 th{
-  background:#1d2744;
+  background:#0b1226;
+  padding:10px;
+  border-radius:8px;
+  font-weight:600;
+  text-transform:uppercase;
+  font-size:13px;
+  letter-spacing:1px;
 }
 
-tr:nth-child(even){
-  background:rgba(255,255,255,.04);
+td{
+  padding:10px;
+  background:rgba(255,255,255,.03);
+  border-radius:8px;
+}
+
+tr{
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+
+tr:hover{
+  transform:scale(1.01);
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+}
+
+.score{
+  font-weight:700;
+  font-size:18px;
 }
 
 .win{
-  color:#4ade80;
-  font-weight:600;
+  color:var(--win);
+  font-weight:700;
+  animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+  0%{text-shadow:0 0 6px rgba(74,222,128,.4);}
+  50%{text-shadow:0 0 16px rgba(74,222,128,.9);}
+  100%{text-shadow:0 0 6px rgba(74,222,128,.4);}
+}
+
+/* Big screen mode */
+@media (min-width:1400px){
+  body{padding:40px;}
+  h1{font-size:40px;}
+  table{font-size:18px;}
+}
+.bracket{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:26px;
+  margin-top:30px;
+}
+
+.column{
+  background:rgba(15,23,42,.6);
+  backdrop-filter: blur(10px);
+  border-radius:18px;
+  padding:14px;
+  min-height:320px;
+  box-shadow:0 12px 28px rgba(0,0,0,.45);
+}
+
+.column h2{
+  text-align:center;
+  margin-bottom:14px;
+  font-size:18px;
+  color:#7dd3fc;
+}
+
+.match{
+  background:rgba(255,255,255,.05);
+  border-radius:14px;
+  padding:10px;
+  margin-bottom:14px;
+  text-align:center;
+}
+
+.player{
+  padding:6px 0;
+  font-size:15px;
+}
+
+.score{
+  font-size:20px;
+  font-weight:700;
+  margin:6px 0;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <h1>Perceptron 2026 — eFootball Knockouts</h1>
+<p style="text-align:center;">
+  <a href="index.html" style="color:#60a5fa;">← Back to Group Stage</a>
+</p>
 
-<div id="content"></div>
+
+<div id="bracket" class="bracket"></div>
+
 
 <script>
 const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
@@ -96,37 +201,53 @@ function matchRow(row){
     <tr>
       <td>${match}</td>
       <td class="${aClass}">${a}</td>
-      <td>${sa ?? ""} - ${sb ?? ""}</td>
+      <td class="score">${sa ?? ""} – ${sb ?? ""}</td>
       <td class="${bClass}">${b}</td>
     </tr>
   `;
 }
 
-async function render(){
-  const root = document.getElementById("content");
-  root.innerHTML = "";
 
-  for(const stage of STAGES){
+async function render(){
+  const bracket = document.getElementById("bracket");
+  bracket.innerHTML = "";
+
+  const stageMap = [
+    {id:"r16", title:"Round of 16", sheet:"Knockout"},
+    {id:"qf", title:"Quarterfinals", sheet:"Quarterfinals"},
+    {id:"sf", title:"Semifinals", sheet:"Semifinals"},
+    {id:"final", title:"Final", sheet:"Final"},
+    {id:"third", title:"3rd Place", sheet:"ThirdPlace"}
+  ];
+
+  for(const stage of stageMap){
     const rows = await fetchSheet(stage.sheet);
 
-    let html = `
-      <div class="stage">
-        <h2>${stage.title}</h2>
-        <table>
-          <tr>
-            <th>Match</th>
-            <th>Player A</th>
-            <th>Score</th>
-            <th>Player B</th>
-          </tr>
-    `;
+    let col = document.createElement("div");
+    col.className = "column";
+    col.innerHTML = `<h2>${stage.title}</h2>`;
 
-    rows.forEach(r => html += matchRow(r));
-    html += `</table></div>`;
+    rows.forEach(r=>{
+      const [m,a,b,sa,sb] = r;
+      let aClass="", bClass="";
+      if(sa!=="" && sb!==""){
+        if(sa>sb) aClass="win";
+        if(sb>sa) bClass="win";
+      }
 
-    root.innerHTML += html;
+      col.innerHTML += `
+        <div class="match">
+          <div class="player ${aClass}">${a}</div>
+          <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
+          <div class="player ${bClass}">${b}</div>
+        </div>
+      `;
+    });
+
+    bracket.appendChild(col);
   }
 }
+
 
 render();
 setInterval(render, 20000);
