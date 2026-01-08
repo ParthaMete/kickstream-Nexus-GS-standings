@@ -116,10 +116,11 @@ tr:hover{
 }
 .bracket{
   display:grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap:26px;
-  margin-top:30px;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
+  gap:24px;
+  align-items:center;
 }
+
 
 .column{
   background:rgba(15,23,42,.6);
@@ -155,6 +156,40 @@ tr:hover{
   font-weight:700;
   margin:6px 0;
 }
+/* Bracket layout */
+.bracket{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
+  gap:26px;
+  align-items:center;
+}
+
+/* One vertical column */
+.column{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* Center column (Final) */
+.column.center{
+  align-items:center;
+}
+
+/* Individual match box */
+.match{
+  background:rgba(255,255,255,.04);
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+}
+
+/* Trophy */
+.trophy{
+  font-size:84px;
+  margin-top:24px;
+  filter: drop-shadow(0 0 20px rgba(34,211,238,.7));
+}
 
 </style>
 
@@ -189,6 +224,22 @@ async function fetchSheet(sheet){
   const json = JSON.parse(text.substring(47).slice(0,-2));
   return json.table.rows.map(r => r.c.map(c => c?.v ?? ""));
 }
+function matchCard(row){
+  const [match,a,b,sa,sb] = row;
+  let aWin="", bWin="";
+  if(sa!=="" && sb!==""){
+    if(sa>sb) aWin="win";
+    if(sb>sa) bWin="win";
+  }
+
+  return `
+    <div class="match">
+      <div class="${aWin}">${a}</div>
+      <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
+      <div class="${bWin}">${b}</div>
+    </div>
+  `;
+}
 
 function matchRow(row){
   const [match,a,b,sa,sb] = row;
@@ -209,44 +260,46 @@ function matchRow(row){
 
 
 async function render(){
-  const bracket = document.getElementById("bracket");
-  bracket.innerHTML = "";
+  const root = document.getElementById("bracket");
+  root.innerHTML = "";
 
-  const stageMap = [
-    {id:"r16", title:"Round of 16", sheet:"Knockout"},
-    {id:"qf", title:"Quarterfinals", sheet:"Quarterfinals"},
-    {id:"sf", title:"Semifinals", sheet:"Semifinals"},
-    {id:"final", title:"Final", sheet:"Final"},
-    {id:"third", title:"3rd Place", sheet:"ThirdPlace"}
-  ];
+  const r16 = await fetchSheet("Knockout");
+  const qf  = await fetchSheet("Quarterfinals");
+  const sf  = await fetchSheet("Semifinals");
+  const fin = await fetchSheet("Final");
 
-  for(const stage of stageMap){
-    const rows = await fetchSheet(stage.sheet);
+  const leftR16 = r16.slice(0,4);
+  const rightR16 = r16.slice(4);
 
-    let col = document.createElement("div");
-    col.className = "column";
-    col.innerHTML = `<h2>${stage.title}</h2>`;
+  const leftQF = qf.slice(0,2);
+  const rightQF = qf.slice(2);
 
-    rows.forEach(r=>{
-      const [m,a,b,sa,sb] = r;
-      let aClass="", bClass="";
-      if(sa!=="" && sb!==""){
-        if(sa>sb) aClass="win";
-        if(sb>sa) bClass="win";
-      }
+  const leftSF = sf.slice(0,1);
+  const rightSF = sf.slice(1);
 
-      col.innerHTML += `
-        <div class="match">
-          <div class="player ${aClass}">${a}</div>
-          <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
-          <div class="player ${bClass}">${b}</div>
-        </div>
-      `;
-    });
+  const col = (title, rows) => {
+    const d = document.createElement("div");
+    d.className="column";
+    d.innerHTML=`<h2>${title}</h2>`;
+    rows.forEach(r => d.innerHTML += matchCard(r));
+    return d;
+  };
 
-    bracket.appendChild(col);
-  }
+  const center = document.createElement("div");
+  center.className="column center";
+  center.innerHTML=`<h2>Final</h2>`;
+  fin.forEach(r => center.innerHTML += matchCard(r));
+  center.innerHTML += `<div class="trophy">🏆</div>`;
+
+  root.append(
+    col("Round of 16", leftR16),
+    col("Quarterfinals", leftQF),
+    center,
+    col("Quarterfinals", rightQF),
+    col("Round of 16", rightR16)
+  );
 }
+
 
 
 render();
