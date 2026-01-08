@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>eFootball Knockout Stage</title>
+
+<style>
+body{
+  background:#0b0f1a;
+  color:#ffffff;
+  font-family:Poppins, Arial, sans-serif;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  letter-spacing:1px;
+}
+
+.stage{
+  background:#12192f;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:18px;
+  box-shadow:0 10px 20px rgba(0,0,0,.35);
+}
+
+.stage h2{
+  margin:0 0 10px 0;
+  font-size:18px;
+  border-bottom:1px solid rgba(255,255,255,.15);
+  padding-bottom:6px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:15px;
+}
+
+th,td{
+  padding:8px;
+  text-align:center;
+}
+
+th{
+  background:#1d2744;
+}
+
+tr:nth-child(even){
+  background:rgba(255,255,255,.04);
+}
+
+.win{
+  color:#4ade80;
+  font-weight:600;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Perceptron 2026 — eFootball Knockouts</h1>
+
+<div id="content"></div>
+
+<script>
+const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
+
+const STAGES = [
+  {title:"Round of 16", sheet:"Knockout"},
+  {title:"Quarterfinals", sheet:"Quarterfinals"},
+  {title:"Semifinals", sheet:"Semifinals"},
+  {title:"Third Place Match", sheet:"ThirdPlace"},
+  {title:"Final", sheet:"Final"}
+];
+
+async function fetchSheet(sheet){
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47).slice(0,-2));
+  return json.table.rows.map(r => r.c.map(c => c?.v ?? ""));
+}
+
+function matchRow(row){
+  const [match,a,b,sa,sb] = row;
+  let aClass="", bClass="";
+  if(sa !== "" && sb !== ""){
+    if(sa > sb) aClass="win";
+    if(sb > sa) bClass="win";
+  }
+  return `
+    <tr>
+      <td>${match}</td>
+      <td class="${aClass}">${a}</td>
+      <td>${sa ?? ""} - ${sb ?? ""}</td>
+      <td class="${bClass}">${b}</td>
+    </tr>
+  `;
+}
+
+async function render(){
+  const root = document.getElementById("content");
+  root.innerHTML = "";
+
+  for(const stage of STAGES){
+    const rows = await fetchSheet(stage.sheet);
+
+    let html = `
+      <div class="stage">
+        <h2>${stage.title}</h2>
+        <table>
+          <tr>
+            <th>Match</th>
+            <th>Player A</th>
+            <th>Score</th>
+            <th>Player B</th>
+          </tr>
+    `;
+
+    rows.forEach(r => html += matchRow(r));
+    html += `</table></div>`;
+
+    root.innerHTML += html;
+  }
+}
+
+render();
+setInterval(render, 20000);
+</script>
+
+</body>
+</html>
