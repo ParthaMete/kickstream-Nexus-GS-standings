@@ -1,110 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>eFootball Knockout Stage</title>
+<meta charset="UTF-8">
+<title>Perceptron 2026 — eFootball Knockouts</title>
 
 <style>
 :root{
-  --accent:#22d3ee;
+  --bg:#020617;
+  --panel:#0f172a;
+  --line:#22d3ee;
   --win:#4ade80;
   --text:#e5e7eb;
 }
 
+*{box-sizing:border-box}
+
 body{
+  margin:0;
+  padding:40px;
+  font-family:Poppins,system-ui,Arial;
+  color:var(--text);
+
   background:
-    radial-gradient(circle at top,#1e293b,#020617 60%),
+    radial-gradient(circle at top,#1e293b,#020617 65%),
+    linear-gradient(180deg,rgba(255,255,255,.05),transparent 40%),
     repeating-linear-gradient(
       90deg,
-      rgba(255,255,255,.025) 0px,
-      rgba(255,255,255,.025) 2px,
+      rgba(255,255,255,.02) 0px,
+      rgba(255,255,255,.02) 2px,
       transparent 2px,
-      transparent 6px
+      transparent 8px
     );
-  color:var(--text);
-  font-family:Poppins,system-ui,Arial;
-  padding:40px;
 }
 
 h1{
   text-align:center;
-  font-size:42px;
-  margin-bottom:10px;
+  font-size:44px;
+  margin-bottom:6px;
   background:linear-gradient(90deg,#22d3ee,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-.subtitle{
+.sub{
   text-align:center;
   opacity:.7;
-  margin-bottom:30px;
+  margin-bottom:36px;
 }
 
-a{
-  color:#7dd3fc;
-  text-decoration:none;
-}
+a{color:#7dd3fc;text-decoration:none}
 
-/* BRACKET GRID */
+/* ================= BRACKET GRID ================= */
+
 .bracket{
   display:grid;
-  grid-template-columns: 1.3fr 1fr 1.4fr 1fr 1.3fr;
-  gap:32px;
+  grid-template-columns: 1.4fr 1fr 1.4fr 1fr 1.4fr;
+  gap:40px;
   align-items:center;
-}
-
-/* COLUMNS */
-.column{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-  background:rgba(15,23,42,.65);
-  backdrop-filter: blur(12px);
-  border-radius:22px;
-  padding:18px;
-  box-shadow:0 20px 45px rgba(0,0,0,.5);
   position:relative;
 }
 
-.column::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(34,211,238,.12),transparent);
-  pointer-events:none;
+/* ================= COLUMNS ================= */
+
+.column{
+  background:rgba(15,23,42,.75);
+  backdrop-filter: blur(14px);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 25px 60px rgba(0,0,0,.6);
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  position:relative;
+}
+
+.column h2{
+  text-align:center;
+  color:#7dd3fc;
+  margin-bottom:6px;
+  letter-spacing:1px;
 }
 
 .column.center{
   align-items:center;
 }
 
-/* TITLES */
-.column h2{
-  text-align:center;
-  margin-bottom:6px;
-  color:#7dd3fc;
-  letter-spacing:1px;
-}
+/* ================= MATCH CARD ================= */
 
-/* MATCH CARD */
 .match{
   background:rgba(255,255,255,.06);
-  border-radius:16px;
+  border-radius:18px;
   padding:14px;
   text-align:center;
-  transition:.35s;
+  transition:.35s ease;
   position:relative;
 }
 
 .match.locked{
-  opacity:.4;
+  opacity:.35;
   filter:grayscale(1);
 }
 
 .match:hover{
-  transform:translateY(-4px) scale(1.03);
-  box-shadow:0 15px 30px rgba(0,0,0,.45);
+  transform:translateY(-6px) scale(1.03);
+  box-shadow:0 20px 40px rgba(0,0,0,.45);
 }
 
 .player{
@@ -121,16 +120,17 @@ a{
 .win{
   color:var(--win);
   font-weight:700;
-  text-shadow:0 0 14px rgba(74,222,128,.9);
+  text-shadow:0 0 16px rgba(74,222,128,.9);
 }
 
-/* CONNECTOR LINES */
-.column:not(.center)::before{
+/* ================= CONNECTOR LINES ================= */
+
+.column:not(.center)::after{
   content:"";
   position:absolute;
-  right:-16px;
   top:20%;
   bottom:20%;
+  right:-20px;
   width:4px;
   background:linear-gradient(
     to bottom,
@@ -138,44 +138,45 @@ a{
     rgba(34,211,238,.6),
     transparent
   );
-  opacity:.5;
+  opacity:.6;
 }
 
-.column:nth-child(4)::before,
-.column:nth-child(5)::before{
-  left:-16px;
+.column:nth-child(4)::after,
+.column:nth-child(5)::after{
+  left:-20px;
   right:auto;
 }
 
-/* TROPHY */
+/* ================= FINAL CENTER ================= */
+
 .trophy{
-  font-size:100px;
+  font-size:110px;
   margin:18px 0;
-  filter: drop-shadow(0 0 30px rgba(34,211,238,.9));
+  filter:drop-shadow(0 0 35px rgba(34,211,238,.9));
 }
 
-/* CHAMPION BANNER */
 .champion{
   background:linear-gradient(90deg,#22d3ee,#60a5fa);
   color:#020617;
-  font-size:22px;
   font-weight:800;
-  padding:14px 28px;
+  font-size:22px;
+  padding:14px 30px;
   border-radius:999px;
-  margin-bottom:18px;
+  margin-bottom:16px;
   animation:champGlow 2.5s infinite;
 }
 
 @keyframes champGlow{
-  0%{box-shadow:0 0 15px rgba(34,211,238,.4);}
-  50%{box-shadow:0 0 35px rgba(34,211,238,1);}
-  100%{box-shadow:0 0 15px rgba(34,211,238,.4);}
+  0%{box-shadow:0 0 18px rgba(34,211,238,.4);}
+  50%{box-shadow:0 0 45px rgba(34,211,238,1);}
+  100%{box-shadow:0 0 18px rgba(34,211,238,.4);}
 }
 
-/* BIG SCREEN */
+/* ================= RESPONSIVE ================= */
+
 @media (min-width:1600px){
-  body{padding:60px;}
-  h1{font-size:52px;}
+  body{padding:60px}
+  h1{font-size:56px}
 }
 </style>
 </head>
@@ -183,86 +184,77 @@ a{
 <body>
 
 <h1>Perceptron 2026 — eFootball Knockouts</h1>
-<div class="subtitle">
-  <a href="index.html">← Back to Group Stage</a>
-</div>
+<div class="sub"><a href="index.html">← Back to Group Stage</a></div>
 
 <div id="bracket" class="bracket"></div>
 
 <script>
-const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
+const SHEET_ID="1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
 
-async function fetchSheet(sheet){
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.substring(47).slice(0,-2));
-  return json.table.rows.map(r => r.c.map(c => c?.v ?? ""));
+async function fetchSheet(name){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+  const r=await fetch(url);
+  const t=await r.text();
+  const j=JSON.parse(t.substring(47).slice(0,-2));
+  return j.table.rows.map(x=>x.c.map(c=>c?.v ?? ""));
 }
 
-function matchCard([,a,b,sa,sb]){
-  let aWin="", bWin="", locked="locked";
-  if(sa!=="" && sb!==""){
-    locked="";
-    if(sa>sb) aWin="win";
-    if(sb>sa) bWin="win";
+function card([,a,b,sa,sb]){
+  let aw="",bw="",lock="locked";
+  if(sa!==""&&sb!==""){
+    lock="";
+    if(sa>sb) aw="win";
+    if(sb>sa) bw="win";
   }
-
   return `
-    <div class="match ${locked}">
-      <div class="player ${aWin}">${a}</div>
+    <div class="match ${lock}">
+      <div class="player ${aw}">${a}</div>
       <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
-      <div class="player ${bWin}">${b}</div>
-    </div>
-  `;
+      <div class="player ${bw}">${b}</div>
+    </div>`;
 }
 
 async function render(){
-  const root = document.getElementById("bracket");
-  root.innerHTML = "";
+  const r16=await fetchSheet("Knockout");
+  const qf =await fetchSheet("Quarterfinals");
+  const sf =await fetchSheet("Semifinals");
+  const fin=await fetchSheet("Final");
+  const third=await fetchSheet("ThirdPlace");
 
-  const r16 = await fetchSheet("Knockout");
-  const qf  = await fetchSheet("Quarterfinals");
-  const sf  = await fetchSheet("Semifinals");
-  const fin = await fetchSheet("Final");
-  const third = await fetchSheet("ThirdPlace");
-
-  const col = (title, rows, center=false) => {
-    const d = document.createElement("div");
-    d.className = center ? "column center" : "column";
-    d.innerHTML = `<h2>${title}</h2>`;
-    rows.forEach(r => d.innerHTML += matchCard(r));
+  const col=(t,r,c=false)=>{
+    const d=document.createElement("div");
+    d.className=c?"column center":"column";
+    d.innerHTML=`<h2>${t}</h2>`;
+    r.forEach(x=>d.innerHTML+=card(x));
     return d;
   };
 
-  const center = document.createElement("div");
+  const center=document.createElement("div");
   center.className="column center";
-  center.innerHTML=`<h2>Final</h2>`;
+  center.innerHTML="<h2>Final</h2>";
+  fin.forEach(x=>center.innerHTML+=card(x));
 
-  fin.forEach(r => center.innerHTML += matchCard(r));
-
-  if(fin[0] && fin[0][3]!=="" && fin[0][4]!==""){
-    const winner = fin[0][3] > fin[0][4] ? fin[0][1] : fin[0][2];
-    center.innerHTML =
-      `<div class="champion">🏆 Champion: ${winner}</div>` +
-      center.innerHTML;
+  if(fin[0]&&fin[0][3]!==""&&fin[0][4]!==""){
+    const w=fin[0][3]>fin[0][4]?fin[0][1]:fin[0][2];
+    center.innerHTML=`<div class="champion">🏆 Champion: ${w}</div>`+center.innerHTML;
   }
 
-  center.innerHTML += `<div class="trophy">🏆</div>`;
-  center.innerHTML += `<h2>3rd Place Match</h2>`;
-  third.forEach(r => center.innerHTML += matchCard(r));
+  center.innerHTML+=`<div class="trophy">🏆</div><h2>3rd Place Match</h2>`;
+  third.forEach(x=>center.innerHTML+=card(x));
 
+  const root=document.getElementById("bracket");
+  root.innerHTML="";
   root.append(
-    col("Round of 16", r16.slice(0,4)),
-    col("Quarterfinals", qf.slice(0,2)),
+    col("Round of 16",r16.slice(0,4)),
+    col("Quarterfinals",qf.slice(0,2)),
     center,
-    col("Quarterfinals", qf.slice(2)),
-    col("Round of 16", r16.slice(4))
+    col("Quarterfinals",qf.slice(2)),
+    col("Round of 16",r16.slice(4))
   );
 }
 
 render();
-setInterval(render, 20000);
+setInterval(render,20000);
 </script>
 
 </body>
