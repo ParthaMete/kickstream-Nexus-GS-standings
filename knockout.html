@@ -6,8 +6,6 @@
 
 <style>
 :root{
-  --bg:#060913;
-  --card:#0f172a;
   --accent:#22d3ee;
   --win:#4ade80;
   --text:#e5e7eb;
@@ -15,135 +13,75 @@
 
 body{
   background:
-    radial-gradient(circle at top,#0b1226,#060913 60%);
+    radial-gradient(circle at top,#1e293b,#020617 55%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.02) 0px,
+      rgba(255,255,255,.02) 2px,
+      transparent 2px,
+      transparent 6px
+    );
   color:var(--text);
   font-family:Poppins,system-ui,Arial;
-  padding:24px;
+  padding:30px;
 }
 
 h1{
   text-align:center;
-  font-size:32px;
-  margin-bottom:30px;
-  letter-spacing:1.5px;
-  background:linear-gradient(90deg,#22d3ee,#60a5fa,#22d3ee);
+  font-size:36px;
+  margin-bottom:14px;
+  background:linear-gradient(90deg,#22d3ee,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-.stage{
-  position:relative;
-  background:rgba(15,23,42,.85);
-  backdrop-filter: blur(12px);
-  border-radius:20px;
-  padding:18px;
-  margin-bottom:26px;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.06),
-    0 25px 60px rgba(0,0,0,.6);
-  overflow:hidden;
+a{
+  color:#7dd3fc;
+  text-decoration:none;
 }
 
-.stage::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(34,211,238,.12),transparent);
-  pointer-events:none;
-}
-
-.stage h2{
-  margin:0 0 14px;
-  font-size:20px;
-  letter-spacing:1px;
-  color:#e0f2fe;
-}
-
-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0 6px;
-  font-size:16px;
-}
-
-th{
-  background:#0b1226;
-  padding:10px;
-  border-radius:8px;
-  font-weight:600;
-  text-transform:uppercase;
-  font-size:13px;
-  letter-spacing:1px;
-}
-
-td{
-  padding:10px;
-  background:rgba(255,255,255,.03);
-  border-radius:8px;
-}
-
-tr{
-  transition:transform .25s ease, box-shadow .25s ease;
-}
-
-tr:hover{
-  transform:scale(1.01);
-  box-shadow:0 10px 25px rgba(0,0,0,.35);
-}
-
-.score{
-  font-weight:700;
-  font-size:18px;
-}
-
-.win{
-  color:var(--win);
-  font-weight:700;
-  animation:pulse 1.8s infinite;
-}
-
-@keyframes pulse{
-  0%{text-shadow:0 0 6px rgba(74,222,128,.4);}
-  50%{text-shadow:0 0 16px rgba(74,222,128,.9);}
-  100%{text-shadow:0 0 6px rgba(74,222,128,.4);}
-}
-
-/* Big screen mode */
-@media (min-width:1400px){
-  body{padding:40px;}
-  h1{font-size:40px;}
-  table{font-size:18px;}
-}
+/* BRACKET GRID */
 .bracket{
   display:grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
-  gap:24px;
+  grid-template-columns: 1.2fr 1fr 1.2fr 1fr 1.2fr;
+  gap:28px;
   align-items:center;
 }
 
-
+/* COLUMNS */
 .column{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
   background:rgba(15,23,42,.6);
   backdrop-filter: blur(10px);
   border-radius:18px;
   padding:14px;
-  min-height:320px;
-  box-shadow:0 12px 28px rgba(0,0,0,.45);
+  box-shadow:0 15px 35px rgba(0,0,0,.45);
 }
 
+.column.center{
+  align-items:center;
+}
+
+/* TITLES */
 .column h2{
   text-align:center;
-  margin-bottom:14px;
-  font-size:18px;
+  margin-bottom:10px;
   color:#7dd3fc;
 }
 
+/* MATCH CARD */
 .match{
   background:rgba(255,255,255,.05);
   border-radius:14px;
-  padding:10px;
-  margin-bottom:14px;
+  padding:12px;
   text-align:center;
+  transition:.3s;
+}
+
+.match:hover{
+  transform:scale(1.03);
 }
 
 .player{
@@ -156,66 +94,39 @@ tr:hover{
   font-weight:700;
   margin:6px 0;
 }
-/* Bracket layout */
-.bracket{
-  display:grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
-  gap:26px;
-  align-items:center;
+
+.win{
+  color:var(--win);
+  font-weight:700;
+  text-shadow:0 0 10px rgba(74,222,128,.8);
 }
 
-/* One vertical column */
-.column{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-/* Center column (Final) */
-.column.center{
-  align-items:center;
-}
-
-/* Individual match box */
-.match{
-  background:rgba(255,255,255,.04);
-  padding:12px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,.35);
-}
-
-/* Trophy */
+/* TROPHY */
 .trophy{
-  font-size:84px;
-  margin-top:24px;
-  filter: drop-shadow(0 0 20px rgba(34,211,238,.7));
+  font-size:90px;
+  margin:20px 0;
+  filter: drop-shadow(0 0 25px rgba(34,211,238,.8));
 }
 
+/* BIG SCREEN */
+@media (min-width:1400px){
+  body{padding:50px;}
+  h1{font-size:44px;}
+}
 </style>
-
 </head>
 
 <body>
 
 <h1>Perceptron 2026 — eFootball Knockouts</h1>
 <p style="text-align:center;">
-  <a href="index.html" style="color:#60a5fa;">← Back to Group Stage</a>
+  <a href="index.html">← Back to Group Stage</a>
 </p>
-
 
 <div id="bracket" class="bracket"></div>
 
-
 <script>
 const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
-
-const STAGES = [
-  {title:"Round of 16", sheet:"Knockout"},
-  {title:"Quarterfinals", sheet:"Quarterfinals"},
-  {title:"Semifinals", sheet:"Semifinals"},
-  {title:"Third Place Match", sheet:"ThirdPlace"},
-  {title:"Final", sheet:"Final"}
-];
 
 async function fetchSheet(sheet){
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
@@ -224,40 +135,21 @@ async function fetchSheet(sheet){
   const json = JSON.parse(text.substring(47).slice(0,-2));
   return json.table.rows.map(r => r.c.map(c => c?.v ?? ""));
 }
-function matchCard(row){
-  const [match,a,b,sa,sb] = row;
+
+function matchCard([,a,b,sa,sb]){
   let aWin="", bWin="";
   if(sa!=="" && sb!==""){
     if(sa>sb) aWin="win";
     if(sb>sa) bWin="win";
   }
-
   return `
     <div class="match">
-      <div class="${aWin}">${a}</div>
+      <div class="player ${aWin}">${a}</div>
       <div class="score">${sa ?? ""} – ${sb ?? ""}</div>
-      <div class="${bWin}">${b}</div>
+      <div class="player ${bWin}">${b}</div>
     </div>
   `;
 }
-
-function matchRow(row){
-  const [match,a,b,sa,sb] = row;
-  let aClass="", bClass="";
-  if(sa !== "" && sb !== ""){
-    if(sa > sb) aClass="win";
-    if(sb > sa) bClass="win";
-  }
-  return `
-    <tr>
-      <td>${match}</td>
-      <td class="${aClass}">${a}</td>
-      <td class="score">${sa ?? ""} – ${sb ?? ""}</td>
-      <td class="${bClass}">${b}</td>
-    </tr>
-  `;
-}
-
 
 async function render(){
   const root = document.getElementById("bracket");
@@ -267,40 +159,29 @@ async function render(){
   const qf  = await fetchSheet("Quarterfinals");
   const sf  = await fetchSheet("Semifinals");
   const fin = await fetchSheet("Final");
+  const third = await fetchSheet("ThirdPlace");
 
-  const leftR16 = r16.slice(0,4);
-  const rightR16 = r16.slice(4);
-
-  const leftQF = qf.slice(0,2);
-  const rightQF = qf.slice(2);
-
-  const leftSF = sf.slice(0,1);
-  const rightSF = sf.slice(1);
-
-  const col = (title, rows) => {
+  const col = (title, rows, center=false) => {
     const d = document.createElement("div");
-    d.className="column";
-    d.innerHTML=`<h2>${title}</h2>`;
+    d.className = center ? "column center" : "column";
+    d.innerHTML = `<h2>${title}</h2>`;
     rows.forEach(r => d.innerHTML += matchCard(r));
     return d;
   };
 
-  const center = document.createElement("div");
-  center.className="column center";
-  center.innerHTML=`<h2>Final</h2>`;
-  fin.forEach(r => center.innerHTML += matchCard(r));
+  const center = col("Final", fin, true);
   center.innerHTML += `<div class="trophy">🏆</div>`;
+  center.innerHTML += `<h2>3rd Place Match</h2>`;
+  third.forEach(r => center.innerHTML += matchCard(r));
 
   root.append(
-    col("Round of 16", leftR16),
-    col("Quarterfinals", leftQF),
+    col("Round of 16", r16.slice(0,4)),
+    col("Quarterfinals", qf.slice(0,2)),
     center,
-    col("Quarterfinals", rightQF),
-    col("Round of 16", rightR16)
+    col("Quarterfinals", qf.slice(2)),
+    col("Round of 16", r16.slice(4))
   );
 }
-
-
 
 render();
 setInterval(render, 20000);
