@@ -6,28 +6,54 @@
 
 <style>
 :root{
-  --bg:#060913;
+  --bg1:#020617;
+  --bg2:#020617;
   --card:#0f172a;
-  --divider:#1e3a8a;
+  --divider:#1e40af;
   --accent:#7dd3fc;
   --win:#4ade80;
   --text:#e5e7eb;
 }
 
+/* ===== BACKGROUND (REAL FIX) ===== */
 body{
   margin:0;
-  padding:50px;
+  padding:60px 40px;
   font-family:Poppins,system-ui,Arial;
   color:var(--text);
+
   background:
-    radial-gradient(circle at center, rgba(30,58,138,.25), transparent 55%),
-    linear-gradient(#060913,#020617);
+    radial-gradient(circle at 50% 15%, rgba(59,130,246,.25), transparent 45%),
+    radial-gradient(circle at 10% 60%, rgba(14,165,233,.15), transparent 40%),
+    radial-gradient(circle at 90% 60%, rgba(14,165,233,.15), transparent 40%),
+    linear-gradient(180deg, #020617, #020617);
+
+  position:relative;
+  overflow-x:auto;
 }
 
+/* subtle grain */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.015),
+      rgba(255,255,255,.015) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  pointer-events:none;
+  opacity:.15;
+}
+
+/* ===== HEADER ===== */
 h1{
   text-align:center;
-  font-size:42px;
-  margin-bottom:12px;
+  font-size:44px;
+  margin-bottom:6px;
   background:linear-gradient(90deg,#7dd3fc,#60a5fa);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
@@ -35,61 +61,63 @@ h1{
 
 .sub{
   text-align:center;
-  opacity:.7;
-  margin-bottom:50px;
+  opacity:.75;
+  margin-bottom:60px;
 }
 
-/* MAIN GRID */
+/* ===== BRACKET GRID ===== */
 .bracket{
   display:grid;
   grid-template-columns:
-    1.4fr  /* R16 left */
-    40px
-    1fr    /* QF left */
-    40px
-    1fr    /* FINAL */
-    40px
-    1fr    /* QF right */
-    40px
-    1.4fr; /* R16 right */
-  align-items:start;
+    1.4fr
+    20px
+    1fr
+    20px
+    1fr
+    20px
+    1fr
+    20px
+    1.4fr;
+  align-items:stretch;
 }
 
-/* SIMPLE DIVIDER */
+/* ===== DIVIDERS (FIXED ALIGNMENT) ===== */
 .divider{
   width:6px;
-  height:100%;
   background:linear-gradient(
     to bottom,
     transparent,
     var(--divider),
     transparent
   );
-  border-radius:10px;
+  border-radius:8px;
+  opacity:.7;
 }
 
-/* COLUMN */
+/* ===== COLUMNS ===== */
 .column{
   display:flex;
   flex-direction:column;
-  gap:26px;
+  gap:28px;
 }
 
 .column h2{
   text-align:center;
   color:var(--accent);
-  margin-bottom:6px;
+  margin-bottom:4px;
 }
 
-/* MATCH CARD */
+/* ===== MATCH CARD ===== */
 .match{
-  background:linear-gradient(180deg,#0f172a,#020617);
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.05), transparent 70%),
+    linear-gradient(180deg,#0f172a,#020617);
   border-radius:18px;
-  padding:18px;
+  padding:20px;
   text-align:center;
   box-shadow:
-    0 20px 45px rgba(0,0,0,.6),
-    inset 0 0 0 1px rgba(255,255,255,.04);
+    0 25px 55px rgba(0,0,0,.65),
+    inset 0 0 0 1px rgba(255,255,255,.05);
 }
 
 .player{padding:6px 0}
@@ -100,21 +128,32 @@ h1{
 }
 .win{color:var(--win)}
 
-/* CENTER */
+/* ===== CENTER COLUMN ===== */
 .center{
   align-items:center;
 }
 
+/* TROPHY GLOW (BROUGHT BACK, CLEAN) */
 .trophy{
   font-size:110px;
-  margin:20px 0;
+  margin:26px 0;
+  position:relative;
 }
-.champion{
-  background:#1e40af;
-  padding:12px 36px;
-  border-radius:999px;
-  font-weight:800;
-  margin-bottom:20px;
+
+.trophy::before{
+  content:"";
+  position:absolute;
+  inset:-25px;
+  background:radial-gradient(circle, rgba(250,204,21,.45), transparent 70%);
+  filter:blur(18px);
+  z-index:-1;
+}
+
+.section-title{
+  color:var(--accent);
+  margin-top:30px;
+  margin-bottom:10px;
+  font-weight:600;
 }
 </style>
 </head>
@@ -167,9 +206,10 @@ async function render(){
 
   const center=document.createElement("div");
   center.className="column center";
-  center.innerHTML="<h2>Final</h2>";
+  center.innerHTML=`<h2>Final</h2>`;
   fin.forEach(r=>center.innerHTML+=card(r));
-  center.innerHTML+=`<div class="trophy">🏆</div><h2>3rd Place</h2>`;
+  center.innerHTML+=`<div class="trophy">🏆</div>`;
+  center.innerHTML+=`<div class="section-title">3rd Place</div>`;
   third.forEach(r=>center.innerHTML+=card(r));
 
   const root=document.getElementById("bracket");
