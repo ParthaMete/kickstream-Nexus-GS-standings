@@ -123,18 +123,16 @@ async function loadGroup(name){
   const json = JSON.parse(text.substring(47, text.length - 2));
 
   const rows = json.table.rows.map(r =>
-    r.c.map(c => c && c.v !== null ? c.v : "")
+    r.c.map(c => c && c.v !== null ? c.v : 0)
   );
 
-  // FORCE EXACTLY 5 ROWS
+  // FORCE EXACTLY 5 ROWS, WITH ZERO STATS
   while (rows.length < 5) {
-    rows.push(["", "", "", "", "", "", "", "", ""]);
+    rows.push(["", 4, 0, 0, 4, 0, 0, 0, 4]);
   }
 
   return rows.slice(0,5);
 }
-
-function v(x){ return x === "" ? "–" : x; }
 
 async function render(){
   const container = document.getElementById("groups");
@@ -162,8 +160,8 @@ async function render(){
       const badge = i < 2 ? `<span class="badge">QUALIFIED</span>` : "";
       html += `
         <tr class="${cls}">
-          <td>${v(r[0])}${badge}</td>
-          ${r.slice(1).map(x=>`<td>${v(x)}</td>`).join("")}
+          <td>${r[0]}${badge}</td>
+          ${r.slice(1).map(v=>`<td>${v}</td>`).join("")}
         </tr>`;
     });
 
