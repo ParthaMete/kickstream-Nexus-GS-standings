@@ -70,7 +70,6 @@ th{
   background:var(--header);
   padding:8px;
   border-radius:8px;
-  font-weight:600;
 }
 
 td{
@@ -95,7 +94,6 @@ tbody tr.top2 td{
   border-radius:6px;
   background:rgba(74,222,128,.15);
   color:var(--win);
-  font-weight:600;
 }
 </style>
 </head>
@@ -114,7 +112,7 @@ const GROUPS = [
 ];
 
 async function loadGroup(name){
-  const range = "T2:AB12";
+  const range = "T2:AB20"; // wider range – SAFE
   const url =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(name)}&range=${range}&tq=select%20*`;
 
@@ -123,8 +121,20 @@ async function loadGroup(name){
   const json = JSON.parse(text.substring(47, text.length - 2));
 
   return json.table.rows
-    .map(r => r.c.map(c => c ? c.v : null))
-    .filter(r => r[0] !== "");
+    .map(r => {
+      const cells = r.c || [];
+      const name = cells[0]?.v ?? "";
+      if(!name) return null;
+
+      // force numeric defaults
+      const nums = [];
+      for(let i=1;i<=8;i++){
+        nums.push(cells[i]?.v ?? 0);
+      }
+
+      return [name, ...nums];
+    })
+    .filter(Boolean);
 }
 
 async function render(){
@@ -133,6 +143,7 @@ async function render(){
 
   for(const name of GROUPS){
     const rows = await loadGroup(name);
+
     const card = document.createElement("div");
     card.className = "card";
 
@@ -149,12 +160,12 @@ async function render(){
     `;
 
     rows.forEach((r,i)=>{
-      const cls = i < 2 ? "top2" : "";
+      const top = i < 2 ? "top2" : "";
       const badge = i < 2 ? `<span class="badge">QUALIFIED</span>` : "";
       html += `
-        <tr class="${cls}">
+        <tr class="${top}">
           <td>${r[0]}${badge}</td>
-          ${r.slice(1).map(v => `<td>${v ?? ""}</td>`).join("")}
+          ${r.slice(1).map(v => `<td>${v}</td>`).join("")}
         </tr>`;
     });
 
