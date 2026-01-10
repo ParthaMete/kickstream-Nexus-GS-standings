@@ -35,14 +35,12 @@ h1{
   -webkit-text-fill-color:transparent;
 }
 
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
   gap:22px;
 }
 
-/* CARD */
 .card{
   background:
     radial-gradient(circle at top, rgba(255,255,255,.06), transparent 70%),
@@ -61,7 +59,6 @@ h1{
   text-align:center;
 }
 
-/* TABLE */
 table{
   width:100%;
   border-collapse:separate;
@@ -83,11 +80,6 @@ td{
   border-radius:8px;
 }
 
-tbody tr:hover td{
-  background:rgba(255,255,255,.07);
-}
-
-/* TOP 2 */
 tbody tr.top2 td{
   color:var(--win);
   font-weight:700;
@@ -118,7 +110,7 @@ tbody tr.top2 td{
 <script>
 const SHEET_ID = "1lblizIobMy975uF3IV38rCqk3E98d6jRcmjQVpXHtqI";
 
-const SHEET_NAMES = [
+const GROUPS = [
   "Group 1","Group 2","Group 3","Group 4",
   "Group 5","Group 6","Group 7","Group 8"
 ];
@@ -132,17 +124,20 @@ async function loadGroup(name){
   const text = await res.text();
   const json = JSON.parse(text.substring(47, text.length - 2));
 
-  // ✅ KEEP ROWS unless ALL cells are empty
   return json.table.rows
-    .map(r => r.c.map(c => c?.v ?? ""))
-    .filter(r => r.some(v => v !== ""));
+    .map(r => {
+      const row = r.c.map(c => c?.v ?? 0);
+      while (row.length < 9) row.push(0);   // 🔥 THE FIX
+      return row;
+    })
+    .filter(r => r[0] !== 0);
 }
 
 async function render(){
   const container = document.getElementById("groups");
   container.innerHTML = "";
 
-  for(const name of SHEET_NAMES){
+  for(const name of GROUPS){
     const rows = await loadGroup(name);
 
     const card = document.createElement("div");
