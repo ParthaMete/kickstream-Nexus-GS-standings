@@ -132,7 +132,7 @@ async function loadGroup(name){
       while (row.length < 9) row.push("");
       return row;
     })
-    .filter(r => r[0] !== "");
+    
 }
 
 async function render(){
@@ -179,3 +179,4 @@ setInterval(render,25000);
 
 </body>
 </html>
+
