@@ -35,14 +35,14 @@ h1{
   -webkit-text-fill-color:transparent;
 }
 
-/* ===== GRID ===== */
+/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
   gap:22px;
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
   background:
     radial-gradient(circle at top, rgba(255,255,255,.06), transparent 70%),
@@ -61,7 +61,7 @@ h1{
   text-align:center;
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
 table{
   width:100%;
   border-collapse:separate;
@@ -83,16 +83,11 @@ td{
   border-radius:8px;
 }
 
-/* ===== ROW HOVER ===== */
-tbody tr{
-  transition:transform .2s ease, box-shadow .2s ease;
-}
-
 tbody tr:hover td{
   background:rgba(255,255,255,.07);
 }
 
-/* ===== TOP 2 GLOW ===== */
+/* TOP 2 */
 tbody tr.top2 td{
   color:var(--win);
   font-weight:700;
@@ -101,7 +96,6 @@ tbody tr.top2 td{
     0 0 12px rgba(74,222,128,.35);
 }
 
-/* small badge */
 .badge{
   display:inline-block;
   margin-left:6px;
@@ -129,21 +123,19 @@ const SHEET_NAMES = [
   "Group 5","Group 6","Group 7","Group 8"
 ];
 
-/* EXACT RANGE: ends at row 12 */
 async function loadGroup(name){
-  const query = encodeURIComponent("select *");
   const range = "T2:AB12";
-
   const url =
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(name)}&range=${range}&tq=${query}`;
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(name)}&range=${range}&tq=select%20*`;
 
   const res = await fetch(url);
   const text = await res.text();
   const json = JSON.parse(text.substring(47, text.length - 2));
 
+  // ✅ KEEP ROWS unless ALL cells are empty
   return json.table.rows
     .map(r => r.c.map(c => c?.v ?? ""))
-    .filter(r => r[0] !== "");
+    .filter(r => r.some(v => v !== ""));
 }
 
 async function render(){
@@ -168,9 +160,9 @@ async function render(){
         <tbody>
     `;
 
-    rows.forEach((r,idx)=>{
-      const cls = idx < 2 ? "top2" : "";
-      const badge = idx < 2 ? `<span class="badge">QUALIFIED</span>` : "";
+    rows.forEach((r,i)=>{
+      const cls = i < 2 ? "top2" : "";
+      const badge = i < 2 ? `<span class="badge">QUALIFIED</span>` : "";
       html += `
         <tr class="${cls}">
           <td>${r[0]}${badge}</td>
