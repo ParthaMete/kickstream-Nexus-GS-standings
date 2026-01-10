@@ -126,11 +126,13 @@ async function loadGroup(name){
 
   return json.table.rows
     .map(r => {
-      const row = r.c.map(c => c?.v ?? 0);
-      while (row.length < 9) row.push(0);   // 🔥 THE FIX
+      const row = r.c.map(c =>
+        c && c.v !== null ? c.v : ""
+      );
+      while (row.length < 9) row.push("");
       return row;
     })
-    .filter(r => r[0] !== 0);
+    .filter(r => r[0] !== "");
 }
 
 async function render(){
