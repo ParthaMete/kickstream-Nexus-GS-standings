@@ -123,8 +123,8 @@ async function loadGroup(name){
   const json = JSON.parse(text.substring(47, text.length - 2));
 
   return json.table.rows
-    .map(r => r.c.map(c => c ? c.v : ""))
-    .filter(r => r[0] !== ""); // keep real players only
+    .map(r => r.c.map(c => c ? c.v : null))
+    .filter(r => r[0] !== "");
 }
 
 async function render(){
@@ -154,7 +154,7 @@ async function render(){
       html += `
         <tr class="${cls}">
           <td>${r[0]}${badge}</td>
-          ${r.slice(1).map(v=>`<td>${v}</td>`).join("")}
+          ${r.slice(1).map(v => `<td>${v ?? ""}</td>`).join("")}
         </tr>`;
     });
 
