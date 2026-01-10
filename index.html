@@ -122,16 +122,9 @@ async function loadGroup(name){
   const text = await res.text();
   const json = JSON.parse(text.substring(47, text.length - 2));
 
-  const rows = json.table.rows.map(r =>
-    r.c.map(c => c && c.v !== null ? c.v : 0)
-  );
-
-  // FORCE EXACTLY 5 ROWS, WITH ZERO STATS
-  while (rows.length < 5) {
-    rows.push(["", 4, 0, 0, 4, 0, 0, 0, 4]);
-  }
-
-  return rows.slice(0,5);
+  return json.table.rows
+    .map(r => r.c.map(c => c ? c.v : ""))
+    .filter(r => r[0] !== ""); // keep real players only
 }
 
 async function render(){
