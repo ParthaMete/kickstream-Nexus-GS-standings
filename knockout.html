@@ -14,39 +14,24 @@
   --text:#e5e7eb;
 }
 
-/* ===== BACKGROUND ===== */
+/* ===== PAGE ===== */
 body{
   margin:0;
-  padding:60px 40px;
+  padding:32px 20px;
   font-family:Poppins,system-ui,Arial;
   color:var(--text);
   background:
-    radial-gradient(circle at 50% 12%, rgba(59,130,246,.28), transparent 45%),
-    radial-gradient(circle at 15% 65%, rgba(14,165,233,.18), transparent 40%),
-    radial-gradient(circle at 85% 65%, rgba(14,165,233,.18), transparent 40%),
+    radial-gradient(circle at 50% 10%, rgba(59,130,246,.25), transparent 45%),
+    radial-gradient(circle at 15% 70%, rgba(14,165,233,.15), transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(14,165,233,.15), transparent 40%),
     linear-gradient(180deg,#020617,#020617);
-  overflow-x:auto;
-}
-
-/* subtle grain */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:repeating-linear-gradient(
-    0deg,
-    rgba(255,255,255,.015),
-    rgba(255,255,255,.015) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  pointer-events:none;
+  overflow-x:hidden;
 }
 
 /* ===== HEADER ===== */
 h1{
   text-align:center;
-  font-size:44px;
+  font-size:38px;
   margin-bottom:6px;
   background:linear-gradient(90deg,#7dd3fc,#60a5fa);
   -webkit-background-clip:text;
@@ -54,27 +39,29 @@ h1{
 }
 .sub{
   text-align:center;
-  opacity:.75;
-  margin-bottom:60px;
+  opacity:.7;
+  margin-bottom:40px;
 }
 
-/* ===== GRID ===== */
+/* ===== BRACKET GRID ===== */
 .bracket{
+  max-width:1400px;
+  margin:auto;
   display:grid;
   grid-template-columns:
-    1.3fr 14px
-    1fr   14px
-    0.9fr 14px
-    1fr   14px
-    1.3fr;
-  align-items:stretch;
+    260px 12px
+    220px 12px
+    200px 12px
+    220px 12px
+    260px;
+  align-items:start;
 }
 
 /* ===== DIVIDERS ===== */
 .divider{
-  width:6px;
-  background:linear-gradient(to bottom,transparent,var(--divider),transparent);
-  border-radius:6px;
+  width:4px;
+  background:linear-gradient(to bottom, transparent, var(--divider), transparent);
+  border-radius:8px;
   opacity:.75;
 }
 
@@ -82,11 +69,12 @@ h1{
 .column{
   display:flex;
   flex-direction:column;
-  gap:28px;
+  gap:18px;
 }
 .column h2{
   text-align:center;
   color:var(--accent);
+  font-size:18px;
   margin-bottom:4px;
 }
 
@@ -95,47 +83,46 @@ h1{
   background:
     radial-gradient(circle at top, rgba(255,255,255,.05), transparent 70%),
     linear-gradient(180deg,#0f172a,#020617);
-  border-radius:18px;
-  padding:20px;
+  border-radius:16px;
+  padding:14px;
   text-align:center;
   box-shadow:
-    0 25px 55px rgba(0,0,0,.65),
+    0 18px 40px rgba(0,0,0,.6),
     inset 0 0 0 1px rgba(255,255,255,.05);
 }
 
-.player{padding:6px 0}
+.player{padding:4px 0;font-size:14px}
 .score{
-  font-size:22px;
+  font-size:18px;
   font-weight:800;
-  margin:6px 0;
+  margin:4px 0;
 }
 .win{color:var(--win)}
 
-/* ===== CENTER ===== */
+/* ===== CENTER COLUMN ===== */
 .center{
   align-items:center;
 }
 
-/* TROPHY */
+/* ===== TROPHY ===== */
 .trophy{
-  font-size:110px;
-  margin:30px 0;
+  font-size:90px;
+  margin:14px 0;
   position:relative;
 }
 .trophy::before{
   content:"";
   position:absolute;
-  inset:-28px;
+  inset:-22px;
   background:radial-gradient(circle, rgba(250,204,21,.45), transparent 70%);
-  filter:blur(20px);
+  filter:blur(18px);
   z-index:-1;
 }
 
 .section-title{
   color:var(--accent);
-  margin-top:30px;
-  margin-bottom:10px;
-  font-weight:600;
+  margin-top:12px;
+  font-size:16px;
 }
 </style>
 </head>
@@ -173,11 +160,10 @@ function card([,a,b,sa,sb]){
 }
 
 async function render(){
-  const r16 = await fetchSheet("Knockout");       // 8
-  const qf  = await fetchSheet("Quarterfinals"); // 4
-  const sf  = await fetchSheet("Semifinals");    // 2
-  const fin = await fetchSheet("Final");          // 1
-  const third = await fetchSheet("ThirdPlace");  // 1
+  const r16=await fetchSheet("Knockout");       // 8 matches
+  const qf =await fetchSheet("Quarterfinals"); // 4 matches
+  const fin=await fetchSheet("Final");          // 1 match
+  const third=await fetchSheet("ThirdPlace");  // 1 match
 
   const col=(title,rows)=>{
     const d=document.createElement("div");
@@ -198,26 +184,16 @@ async function render(){
   const root=document.getElementById("bracket");
   root.innerHTML="";
   root.append(
-    col("Round of 16", r16.slice(0,4)),
-    div(),
-    col("Quarterfinals", qf.slice(0,2)),
-    div(),
-    col("Semifinals", sf.slice(0,1)),
-    div(),
+    col("Round of 16",r16.slice(0,4)),
+    Object.assign(document.createElement("div"),{className:"divider"}),
+    col("Quarterfinals",qf.slice(0,2)),
+    Object.assign(document.createElement("div"),{className:"divider"}),
     center,
-    div(),
-    col("Semifinals", sf.slice(1,2)),
-    div(),
-    col("Quarterfinals", qf.slice(2,4)),
-    div(),
-    col("Round of 16", r16.slice(4,8))
+    Object.assign(document.createElement("div"),{className:"divider"}),
+    col("Quarterfinals",qf.slice(2,4)),
+    Object.assign(document.createElement("div"),{className:"divider"}),
+    col("Round of 16",r16.slice(4,8))
   );
-}
-
-function div(){
-  const d=document.createElement("div");
-  d.className="divider";
-  return d;
 }
 
 render();
